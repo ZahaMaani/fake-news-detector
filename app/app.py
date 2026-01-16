@@ -25,13 +25,18 @@ def clean_news_text(text):
     important_words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
     return " ".join(important_words)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_PATH = os.path.join(BASE_DIR, '..', 'models', 'fake_news_model.pkl')
+VECTORIZER_PATH = os.path.join(BASE_DIR, '..', 'models', 'tfidf_vectorizer.pkl')
+
 @st.cache_resource
 def load_assets():
-    model_path = '../models/fake_news_model.pkl'
-    vectorizer_path = '../models/tfidf_vectorizer.pkl'
-    
-    model = joblib.load(model_path)
-    vectorizer = joblib.load(vectorizer_path)
+    if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH):
+        raise FileNotFoundError(f"Could not find models at {MODEL_PATH}")
+        
+    model = joblib.load(MODEL_PATH)
+    vectorizer = joblib.load(VECTORIZER_PATH)
     return model, vectorizer
 
 try:
